@@ -1,8 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import type { AgentConfig } from "./flash-client.ts";
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
+import type { AgentConfig, Session } from "./flash-client.ts";
+import { configPath, dataDir, sessionPath } from "./paths.ts";
 
-export const CONFIG_PATH = "data/config.json";
+export { configPath, sessionPath } from "./paths.ts";
+export const CONFIG_PATH = configPath();
 
 const emptyConfig = (): AgentConfig => ({
   companyId: "",
@@ -17,9 +19,9 @@ const emptyConfig = (): AgentConfig => ({
   hqCity: { city: null, state: null },
 });
 
-export function loadConfig(path = CONFIG_PATH): AgentConfig {
-  if (!existsSync(resolve(path))) return emptyConfig();
-  const parsed = JSON.parse(readFileSync(resolve(path), "utf8")) as AgentConfig;
+export function loadConfig(path = configPath()): AgentConfig {
+  if (!existsSync(path)) return emptyConfig();
+  const parsed = JSON.parse(readFileSync(path, "utf8")) as AgentConfig;
   const base = emptyConfig();
   return {
     ...base,
@@ -30,10 +32,23 @@ export function loadConfig(path = CONFIG_PATH): AgentConfig {
   };
 }
 
-export function saveConfig(config: AgentConfig, path = CONFIG_PATH): void {
-  const abs = resolve(path);
-  mkdirSync(dirname(abs), { recursive: true });
-  writeFileSync(abs, `${JSON.stringify(config, null, 2)}\n`);
+export function saveConfig(config: AgentConfig, path = configPath()): void {
+  mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
+  writeFileSync(path, `${JSON.stringify(config, null, 2)}\n`);
+  try {
+    chmodSync(dataDir(), 0o700);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function loadSession(path = sessionPath()): Session {
+  return JSON.parse(readFileSync(path, "utf8")) as Session;
+}
+
+export function saveSession(session: Session, path = sessionPath()): void {
+  mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
+  writeFileSync(path, `${JSON.stringify(session, null, 2)}\n`, { mode: 0o600 });
 }
 
 export type OnboardingGap = "hqCity" | "schedule" | "workload";

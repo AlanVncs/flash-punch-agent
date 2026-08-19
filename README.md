@@ -1,24 +1,38 @@
 # flash-punch-agent
 
-HTTP-first helper for Flash HROS punch (Folha Certa). Playwright is only for login / MFA / unmapped screens.
+Helper HTTP-first para ponto na Flash HROS (Folha Certa). Playwright só para login / MFA / telas ainda não mapeadas.
 
-## Config
+Skill de usuário no Cursor (`~/.cursor/skills/`), não um subagente. Código, config e sessão ficam em `~/.flash-punch-agent`.
 
-On first use the agent must ask for **company HQ city** (city + UF), **work hours** (punch times + weekdays), **daily workload**, and **lunch/break duration**. Those go in `data/config.json`. Do not guess them.
-
-After a browser login, save tokens to `data/session.json` (`accessToken`, `companyId`, `deviceId`, `wafToken`).
-
-Do not commit `data/`.
+## Instalação (Ubuntu, Node 22+)
 
 ```bash
-npm run help
-npm run status
-npm run check -- --year 2026 --month 8
-npm run punch -- --date 2026-08-14 --time 10:00
+npx --yes github:AlanVncs/flash-punch-agent
 ```
 
-Manual punches stay pending until a manager approves them.
+Isso copia o app para `~/.flash-punch-agent`, roda `npm install`, grava a skill em `~/.cursor/skills/flash-punch-agent` e liga o CLI em `~/.local/bin/flash-punch-agent`.
 
-`npm run check` prints a Portuguese summary of days with anomalies (missing punches, absences, pending, extra times).
+Para atualizar: `npx --yes github:AlanVncs/flash-punch-agent install`
 
-See `docs/api-mapping.md` and `.cursor/skills/flash-punch-agent/SKILL.md`.
+Se a sessão ou o `config.json` ainda estiverem numa pasta de projeto (`data/`), o `install` copia para a home **somente se** o destino ainda não tiver esses arquivos.
+
+Abra um chat novo no Cursor (ou reinicie) para a skill valer em qualquer janela.
+
+## Dados
+
+Não invente cidade sede, horários, carga ou intervalo. No primeiro uso o agente pergunta e grava em `~/.flash-punch-agent/data/config.json`.
+
+Depois do login no browser, os tokens vão para `~/.flash-punch-agent/data/session.json` (`accessToken`, `companyId`, `deviceId`, `wafToken`). Não commite isso.
+
+Override: `FLASH_PUNCH_HOME`.
+
+```bash
+flash-punch-agent help
+flash-punch-agent status
+flash-punch-agent check --year 2026 --month 8
+flash-punch-agent punch --date 2026-08-14 --time 10:00
+```
+
+Marcações manuais ficam em aprovação até o gestor aceitar.
+
+Ver `docs/api-mapping.md` e `.cursor/skills/flash-punch-agent/SKILL.md`.

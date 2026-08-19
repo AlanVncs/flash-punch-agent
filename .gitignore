@@ -4,6 +4,7 @@ dist/
 .env.*
 !.env.example
 data/
+# User install lives in $HOME/.flash-punch-agent (not this repo).
 *.session.json
 playwright-report/
 test-results/

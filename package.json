@@ -1,8 +1,29 @@
 {
   "name": "flash-punch-agent",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "flash-punch-agent": "./bin/flash-punch-agent.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    ".cursor/skills",
+    "config.example.json",
+    ".env.example",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlanVncs/flash-punch-agent.git"
+  },
   "scripts": {
+    "install-agent": "node --experimental-strip-types src/cli.ts install",
     "help": "node --experimental-strip-types src/cli.ts help",
     "status": "node --experimental-strip-types src/cli.ts status",
     "check": "node --experimental-strip-types src/cli.ts check",

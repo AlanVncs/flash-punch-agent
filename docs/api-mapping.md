@@ -91,7 +91,7 @@ Motivos:
 
 ## Agent schedule and HQ city
 
-Do not hardcode. On first use, ask the user and save to `data/config.json`:
+Do not hardcode. On first use, ask the user and save to `$HOME/.flash-punch-agent/data/config.json`:
 
 - `hqCity.city` / `hqCity.state` — company HQ for holidays
 - `schedule.punches` / `schedule.weekdays` — this user's punch times

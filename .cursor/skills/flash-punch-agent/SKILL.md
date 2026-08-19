@@ -7,15 +7,23 @@ description: Flash punch agent for HROS/Folha Certa. HTTP first, Playwright when
 
 Prefer HTTP against mapped Folha Certa BFFs. Use a visible browser only for login, MFA (Flash app code), or unmapped UI.
 
-Read [docs/api-mapping.md](../../../docs/api-mapping.md), `config.example.json`, `data/config.json`, and [src/capabilities.ts](../../../src/capabilities.ts). Never commit tokens. Session file: `data/session.json`.
+This skill is **user-global**. Code, config, and session live under `$HOME/.flash-punch-agent` (override with `FLASH_PUNCH_HOME`). Do not use a project `data/` folder. If that home is missing, tell the user to run:
+
+```bash
+npx --yes github:AlanVncs/flash-punch-agent
+```
+
+(`install` atualiza uma instalação existente.) Requires Node.js 22+ on Ubuntu. After install, CLI is `flash-punch-agent` (`~/.local/bin`).
+
+Read `$HOME/.flash-punch-agent/docs/api-mapping.md`, `$HOME/.flash-punch-agent/config.example.json`, `$HOME/.flash-punch-agent/data/config.json`, and `$HOME/.flash-punch-agent/src/capabilities.ts`. Never commit tokens. Session file: `$HOME/.flash-punch-agent/data/session.json`. Write session with `saveSession` in `src/config.ts` (mode 600). CLI: `flash-punch-agent help|status|check|punch`.
 
 ## What is possible (mandatory when asked)
 
-If the user asks what you can do, what is possible, help, capabilities, or similar, answer from `formatCapabilitiesPt()` in `src/capabilities.ts`. Portuguese. Lead with what you **can** do, then a short “ainda não”. Offer examples. Do not invent features that are not in that catalog. Keep the catalog in sync when a real capability is added or removed.
+If the user asks what you can do, what is possible, help, capabilities, or similar, answer from `formatCapabilitiesPt()` in `$HOME/.flash-punch-agent/src/capabilities.ts`. Portuguese. Lead with what you **can** do, then a short “ainda não”. Offer examples. Do not invent features that are not in that catalog. Keep the catalog in sync when a real capability is added or removed.
 
 ## First use (mandatory)
 
-Before login, timesheet, punches, reminders, or holidays, check `data/config.json`.
+Before login, timesheet, punches, reminders, or holidays, check `$HOME/.flash-punch-agent/data/config.json`.
 
 Onboarding is incomplete if any of these is missing:
 
@@ -23,7 +31,7 @@ Onboarding is incomplete if any of these is missing:
 - `schedule.punches` (non-empty) and `schedule.weekdays` (non-empty)
 - `schedule.workloadHours` and `schedule.breakMinutes` (daily workload and lunch/break)
 
-If incomplete, **stop and ask only the missing items**. Do not invent city, hours, workload, or break. Save answers into `data/config.json` and confirm before any Flash action.
+If incomplete, **stop and ask only the missing items**. Do not invent city, hours, workload, or break. Save answers into `$HOME/.flash-punch-agent/data/config.json` (`saveConfig` in `src/config.ts`) and confirm before any Flash action.
 
 Ask in Portuguese, for example:
 
@@ -41,7 +49,7 @@ These values are per user, not Flash defaults. If the user later says “configu
 
 ## HTTP flow (only after onboarding)
 
-1. If `data/session.json` is missing or 401, open `https://hros.flashapp.com.br/`, ask the user to log in (CPF, password, Flash app code), then save `accessToken`, `companyId`, `deviceId`, `wafToken`.
+1. If `$HOME/.flash-punch-agent/data/session.json` is missing or 401, open `https://hros.flashapp.com.br/`, ask the user to log in (CPF, password, Flash app code), then save `accessToken`, `companyId`, `deviceId`, `wafToken` with `saveSession`.
 2. Read timesheet: `GetEspelhopontoDiaResumido` and month hour-bank: `GetEspelhopontoTotal` (`Periodo` = Portuguese month name in caps, e.g. `JULHO`; values are **minutes**).
 3. Conferência: `buildMonthReview` + `reviewSlots`. Show days from the 1st through **today** (not only anomalies). **Do not show future days** or **future punch times** (including remaining slots later today). Workdays: date + times only (green approved, yellow pending, red to-mark/suggested). Non-working days: date + label — **Sábado**, **Domingo**, **Feriado**, or **Folga** (weekday rest from Flash/DUNT on a work calendar). If someone punched on a rest day, show the label and the times. Hour bank on **one line**: `Anterior: ±HH:MM | Atual: ±HH:MM | Saldo: ±HH:MM` (`bancoHoraSaldoAnterior`, `bancoHoraSaldoPeriodo`, `bancoHoraSaldoAcumulado`).
 
@@ -54,16 +62,17 @@ These values are per user, not Flash defaults. If the user later says “configu
    `PONTO_ORIGINAL` and approved `PONTO_AJUSTADO` = approved, `PONTO_PENDENTE` = pending. Present conferência in a canvas when possible.
 4. Punch adjustment — **preview then ask**. When the user asks to adjust or include punches:
    1. Evaluate the request (which days/times). Include **only past times**, unless the user explicitly asks for a future punch.
-   2. Show a **dedicated** canvas with **only the days that would change**. Each day: date + **Agora** + **Depois**, colored times (green approved, yellow pending, red to-mark). **Do not** include the month list, hour bank, or other days. Chat asks whether to apply. Use `previewInserts` from `src/preview.ts`.
+   2. Show a **dedicated** canvas with **only the days that would change**. Each day: date + **Agora** + **Depois**, colored times (green approved, yellow pending, red to-mark). **Do not** include the month list, hour bank, or other days. Chat asks whether to apply. Use `previewInserts` from `$HOME/.flash-punch-agent/src/preview.ts`.
    3. Ask whether to apply **exactly as shown**. Do **not** call `PostMarcacaopontoManual` in the same turn as the preview.
    4. After an explicit yes, insert with `PostMarcacaopontoManual`. Manual punches stay **Em aprovação**. If they say no or change the plan, do not insert.
 
 ## Playwright fallback
 
-Navigate `/time-and-attendance/timesheet` or `/time-and-attendance/clock-in`. Capture new tRPC calls into `docs/api-mapping.md` before repeating them via HTTP.
+Navigate `/time-and-attendance/timesheet` or `/time-and-attendance/clock-in`. Capture new tRPC calls into `$HOME/.flash-punch-agent/docs/api-mapping.md` before repeating them via HTTP.
 
 ## Do not
 
 - Skip onboarding or guess HQ city / work hours / workload / break.
 - Mix the month timesheet or hour bank into an adjustment preview.
 - Store passwords or MFA codes.
+- Read or write session/config from the current git project instead of `$HOME/.flash-punch-agent/data`.
