@@ -1,4 +1,4 @@
-# Flash time-and-attendance mapping
+# Flash punch agent — attendance API mapping
 
 Status: login, timesheet read, and **manual punch POST** mapped.
 

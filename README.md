@@ -1,6 +1,6 @@
 # flash-punch-agent
 
-HTTP-first helper for Flash HROS time clock (Folha Certa). Playwright is only for login / MFA / unmapped screens.
+HTTP-first helper for Flash HROS punch (Folha Certa). Playwright is only for login / MFA / unmapped screens.
 
 ## Config
 

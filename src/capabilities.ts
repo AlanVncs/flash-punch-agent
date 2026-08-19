@@ -1,7 +1,7 @@
 /** User-facing catalog of what this agent can do. Keep in sync with the skill. */
 
 export const CAPABILITIES_PT = {
-  title: "O que posso fazer no ponto (Flash / Folha Certa)",
+  title: "O que o Flash Punch Agent pode fazer (Flash / Folha Certa)",
   can: [
     {
       name: "Conferir um mês",

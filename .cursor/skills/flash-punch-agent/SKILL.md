@@ -1,6 +1,6 @@
 ---
 name: flash-punch-agent
-description: Assists Flash HROS time clock (ponto) via HTTP first, Playwright when needed. Use when the user mentions Flash, batimento de ponto, espelho de ponto, Folha Certa, marcação, pontos faltantes, carga horária, feriados da sede, o que o agente pode fazer, ou capacidades.
+description: Flash punch agent for HROS/Folha Certa. HTTP first, Playwright when needed. Use when the user mentions Flash, flash-punch-agent, batimento de ponto, espelho de ponto, Folha Certa, marcação, pontos faltantes, carga horária, feriados da sede, o que o agente pode fazer, ou capacidades.
 ---
 
 # Flash punch agent
