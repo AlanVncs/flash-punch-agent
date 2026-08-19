@@ -1,0 +1,21 @@
+{
+  "companyId": "YOUR_COMPANY_ID",
+  "folhaCertaUserId": 0,
+  "schedule": {
+    "weekdays": [],
+    "punches": [],
+    "workloadHours": 0,
+    "breakMinutes": 0
+  },
+  "defaults": {
+    "motivoId": 41351,
+    "motivo": "Esquecimento de marcação",
+    "justificativa": "",
+    "diaSeguinte": false,
+    "identificadorColetor": "Browser"
+  },
+  "hqCity": {
+    "city": null,
+    "state": null
+  }
+}

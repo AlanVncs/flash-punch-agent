@@ -1,0 +1,11 @@
+{
+  "name": "flash-punch-agent",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "help": "node --experimental-strip-types src/cli.ts help",
+    "status": "node --experimental-strip-types src/cli.ts status",
+    "check": "node --experimental-strip-types src/cli.ts check",
+    "punch": "node --experimental-strip-types src/cli.ts punch"
+  }
+}
