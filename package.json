@@ -7,7 +7,8 @@
     "flash-punch-agent": "./bin/flash-punch-agent.mjs"
   },
   "files": [
-    "bin",
+    "bin/flash-punch-agent.mjs",
+    "bin/install-home.mjs",
     "src",
     "docs",
     ".cursor/skills",
